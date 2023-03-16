@@ -8,8 +8,10 @@ import jwt from 'jsonwebtoken';
 import MainAppConfig from "../config/appConfig";
 import {PassValid} from "../services/auth/auth";
 import authMiddleware from "../middleware/authMiddleware";
-
+import File from "../models/fileModel";
+import {FileService} from "../services/fileService";
 const authRoutes = express.Router();
+
 
 authRoutes.post('/registration',
     body('email').isEmail(),
@@ -29,8 +31,9 @@ authRoutes.post('/registration',
 
         const hashPassword = await SHA256(password);
 
-        await User.create({email, password:hashPassword});
+        const newUser = await User.create({email, password:hashPassword});
 
+        await FileService.createDir(new File({user:newUser.id, name:''}) as any)
         return res.status(ServerStatus.Ok).json({message:ServerMessageUser.UserCreated});
     } catch (e){
         console.log(e);

@@ -11,7 +11,7 @@ const File = new Schema({
     size:{type: MongooseType.Number, default:0},
     user:{type: MongooseType.ObjectId, ref:"User"},
     parent:{type: MongooseType.ObjectId, ref:"File"},
-    child:[{type: MongooseType.ObjectId, ref:"File"}]
+    childs:[{type: MongooseType.ObjectId, ref:"File"}]
 })
 
 export default model('File', File)
