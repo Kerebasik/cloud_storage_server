@@ -17,7 +17,7 @@ export class FileController {
     static async createDir(req:Request<{},{}, { name: string, type:string, parent:Mongoose.Schema.Types.ObjectId }>, res:Response){
         try {
             const {name, type, parent} = req.body
-            const file:any = new File({name, type, parent, user:req.userId});
+            const file = new File({name, type, parent, user:req.userId});
             const parentFile = await File.findOne({_id:parent})
             if(!parentFile) {
                 file.path = name
@@ -38,7 +38,7 @@ export class FileController {
 
     static async getFiles(req:Request, res:Response){
         try{
-            const files:any = await File.find({user:req.userId, parent:req.query.parent})
+            const files = await File.find({user:req.userId, parent:req.query.parent})
             res.status(ServerStatus.Ok).json(files)
         } catch (e){
             console.log(e)

@@ -3,7 +3,20 @@ import {MongooseType} from "../types/mongoose/mongoseType";
 
 mongoose.set('strictQuery', true)
 
-const File = new Schema({
+export interface IFile {
+    _id:mongoose.Schema.Types.ObjectId,
+    name:string,
+    type:string,
+    access_link?:string,
+    path?:string,
+    size?:number,
+    user:mongoose.Schema.Types.ObjectId,
+    parent?:mongoose.Schema.Types.ObjectId,
+    childs:[mongoose.Schema.Types.ObjectId]
+}
+
+
+const File = new Schema<IFile>({
     name:{type: MongooseType.String, required:true},
     type:{type: MongooseType.String, required: true},
     access_link:{type:MongooseType.String},
