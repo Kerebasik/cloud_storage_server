@@ -9,9 +9,20 @@ import File from "../models/fileModel";
 import {PassValid} from "../services/auth/auth";
 import jwt from "jsonwebtoken";
 import MainAppConfig from "../config/appConfig";
+import {RequestWithBody} from "../types/requestType";
+
+type TRegistration = {
+    email:string,
+    password:string
+}
+
+type TLogin = {
+    email:string,
+    password:string
+}
 
 export class AuthController {
-    static async registration(req:Request, res:Response){
+    static async registration(req:RequestWithBody<TRegistration>, res:Response){
         try{
             const errors = validationResult(req);
             if(!errors.isEmpty()){
@@ -32,7 +43,7 @@ export class AuthController {
         }
     }
 
-    static async login(req:Request, res:Response){
+    static async login(req:RequestWithBody<TLogin>, res:Response){
         try {
             const {email, password} = req.body;
             const user = await User.findOne({email});

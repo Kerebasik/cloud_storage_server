@@ -1,9 +1,9 @@
 import {FileService} from "../services/fileService";
 import {Request, Response} from "express";
 import File from "../models/fileModel";
-import Mongoose from 'mongoose'
 import {ServerStatus} from "../enums/server/serverStatus";
 import {ServerMessage} from "../enums/server/serverMessage";
+import {RequestWithQuery} from "../types/requestType";
 
 declare global {
     namespace Express {
@@ -13,8 +13,18 @@ declare global {
     }
 }
 
+type TCreateDir={
+    name:string,
+    type:string,
+    parent:string
+}
+
+type TGetFiles={
+    parent:string
+}
+
 export class FileController {
-    static async createDir(req:Request<{},{}, { name: string, type:string, parent:Mongoose.Schema.Types.ObjectId }>, res:Response){
+    static async createDir(req:Request<TCreateDir>, res:Response){
         try {
             const {name, type, parent} = req.body
             const file = new File({name, type, parent, user:req.userId});
@@ -36,7 +46,7 @@ export class FileController {
         }
     }
 
-    static async getFiles(req:Request, res:Response){
+    static async getFiles(req:RequestWithQuery<TGetFiles>, res:Response){
         try{
             const files = await File.find({user:req.userId, parent:req.query.parent})
             res.status(ServerStatus.Ok).json(files)
