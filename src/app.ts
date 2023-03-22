@@ -1,11 +1,14 @@
 import express, {Express} from 'express';
 import authRoutes from "./routes/authRoutes";
 import fileRouter from "./routes/fileRoutes";
-const app:Express = express()
+import expressFileUpload from "./middleware/expressFileUpload";
 import cors from './middleware/corsMiddleware';
 import User from './models/userModel';
+
+const app:Express = express()
 app.use(express.json());
 
+app.use(expressFileUpload)
 app.use(cors);
 app.use("/api/auth", authRoutes);
 app.use("/api/file", fileRouter);

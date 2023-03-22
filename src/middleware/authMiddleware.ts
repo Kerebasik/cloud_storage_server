@@ -30,7 +30,7 @@ export default function (req:Request, res:Response, next:NextFunction){
         }
         const decode:TDecode = Object(jwt.verify(token, appConfig.SECRET_KEY))
         req.userId = decode.id;
-        next()
+        return next()
     } catch (e){
         console.log(e)
         return res.status(ServerStatus.Unauthorized).json({message:ServerMessage.AuthError})

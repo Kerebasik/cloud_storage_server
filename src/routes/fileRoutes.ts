@@ -5,6 +5,7 @@ import authMiddleware from "../middleware/authMiddleware";
 const fileRouter = Router();
 
 fileRouter.post('', authMiddleware, FileController.createDir)
+fileRouter.post('/uploadAlone', authMiddleware, FileController.uploadFile)
 fileRouter.get('', authMiddleware, FileController.getFiles)
 
 export default fileRouter

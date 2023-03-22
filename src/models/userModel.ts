@@ -7,10 +7,10 @@ export interface IUser {
     _id:mongoose.Schema.Types.ObjectId,
     email:string,
     password:string,
-    diskStorage?: number,
-    usedStorage?:number,
+    diskStorage: number,
+    usedStorage:number,
     avatar?:string,
-    files?:mongoose.Schema.Types.ObjectId
+    files:mongoose.Schema.Types.ObjectId
 }
 
 const User = new Schema<IUser>({
