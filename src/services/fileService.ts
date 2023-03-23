@@ -19,5 +19,20 @@ export class FileService{
             }
         }))
     }
+
+    static deleteFileOrDir(file:IFile){
+        try {
+            const path = `${MainAppConfig.FILE_PATH}\\${file.user}\\${file.path}`
+            if(fs.existsSync(path)){
+                if (file.type === 'dir') {
+                    return  fs.rmdirSync(path)
+                } else {
+                    return fs.unlinkSync(path)
+                }
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
 }
 

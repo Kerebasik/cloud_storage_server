@@ -49,7 +49,7 @@ export class FileController {
         try {
             const file = req.files?.file as UploadedFile;
 
-            const parent = await File.findOne({user: req.userId, _id:req.body.parent})
+            const parent = await File.findOne({user: req.userId, _id:req.body.parent}) as HydratedDocument<IFile>
             const user = await User.findOne({_id:req.userId}) as HydratedDocument<IUser>
 
             if(user.usedStorage + file.size > user.diskStorage){
@@ -71,15 +71,24 @@ export class FileController {
             }
             await file.mv(path);
             const type = file.name.split('.').pop();
+            let filePath = file.name
+            if(parent) {
+                filePath = parent.path + '\\' + file.name
+            }
+
             const newFile = new File({
                 name:file.name,
                 type,
                 size:file.size,
-                path: parent?.path,
+                path: filePath,
                 parent: parent?._id,
                 user:user._id
             })
+
+
             await newFile.save();
+            parent.children.push(newFile._id)
+            await parent.save();
             await user.save();
             return res.status(201).json({message:'File is created'})
         } catch (e){
@@ -106,24 +115,12 @@ export class FileController {
     static async deleteFile(req:RequestWithQuery<TDeleteFile>, res:Response){
         try {
             const file = await File.findOne({_id:req.query.id, user:req.userId}) as HydratedDocument<IFile>;
-            let path;
-
-            if(file.type === 'dir'){
-                path = `${MainAppConfig.FILE_PATH}\\${req.userId}\\${file.name}`
-                if(fs.existsSync(path)){
-                    return fs.rmdir(path,()=>{
-                        res.status(ServerStatus.Ok).json({message:'Dir deleted'})
-                    })
-                }
-            } else {
-                path = `${MainAppConfig.FILE_PATH}\\${req.userId}\\${file.path}\\${file.name}`
-                if(fs.existsSync(path)){
-                    return fs.unlink(path, ()=>{
-                        res.status(ServerStatus.Ok).json({message: 'File deleted'});
-                    })
-                }
+            if(!file){
+                return res.status(ServerStatus.NotFound).json({message:'File not found'})
             }
-            return res.status(ServerStatus.BadRequest).json({message:ServerMessage.UncorrectedReq})
+            FileService.deleteFileOrDir(file);
+            await file.deleteOne();
+            return res.status(ServerStatus.Ok).json({message:'File was delete'})
         } catch (e){
             console.log(e)
             return res.status(ServerStatus.Error).json({message:ServerMessage.Error})
