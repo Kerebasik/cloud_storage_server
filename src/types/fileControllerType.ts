@@ -7,3 +7,15 @@ export type TCreateDir={
 export type TGetFiles={
     parent:string
 }
+
+export type TUploadFile = {
+    parent:string
+}
+
+export type TDowloadFile = {
+    id:string
+}
+
+export type TDeleteFile = {
+    id:string
+}

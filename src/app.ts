@@ -1,7 +1,7 @@
 import express, {Express} from 'express';
 import authRoutes from "./routes/authRoutes";
 import fileRouter from "./routes/fileRoutes";
-import expressFileUpload from "./middleware/expressFileUpload";
+import expressFileUpload from "./middleware/fileUploadMiddleware";
 import cors from './middleware/corsMiddleware';
 import User from './models/userModel';
 

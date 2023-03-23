@@ -8,9 +8,9 @@ export interface IFile {
     name:string,
     type:string,
     access_link?:string,
-    path?:string,
+    path:string,
     date:Date,
-    size?:number,
+    size:number,
     user:mongoose.Schema.Types.ObjectId,
     parent?:mongoose.Schema.Types.ObjectId,
     children:[mongoose.Schema.Types.ObjectId]

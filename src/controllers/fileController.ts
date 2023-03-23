@@ -1,13 +1,13 @@
 import {FileService} from "../services/fileService";
 import {Request, Response} from "express";
-import File from "../models/fileModel";
+import File, {IFile} from "../models/fileModel";
 import { HydratedDocument } from 'mongoose';
 import fs from "fs";
-import {TCreateDir, TGetFiles} from "../types/fileControllerType";
+import {TCreateDir, TDeleteFile, TDowloadFile, TGetFiles, TUploadFile} from "../types/fileControllerType";
 import {UploadedFile} from "express-fileupload";
 import {ServerStatus} from "../enums/server/serverStatus";
 import {ServerMessage} from "../enums/server/serverMessage";
-import {RequestWithQuery} from "../types/requestType";
+import {RequestWithBody, RequestWithQuery} from "../types/requestType";
 import User, {IUser} from "../models/userModel";
 import MainAppConfig from "../config/appConfig";
 
@@ -45,7 +45,7 @@ export class FileController {
         }
     }
 
-    static async uploadFile(req:Request, res:Response){
+    static async uploadFile(req:RequestWithBody<TUploadFile>, res:Response){
         try {
             const file = req.files?.file as UploadedFile;
 
@@ -87,4 +87,47 @@ export class FileController {
             return res.status(ServerStatus.Error).json({message:"Upload error"})
         }
     }
+
+    static async downloadFile(req:RequestWithQuery<TDowloadFile>, res:Response){
+        try {
+            const file = await File.findOne({_id: req.query.id, user: req.userId}) as HydratedDocument<IFile>;
+            const path = `${MainAppConfig.FILE_PATH}\\${req.userId}\\${file.path}\\${file.name}`;
+            if(fs.existsSync(path)){
+                return res.download(path, file.name)
+            }
+            return res.status(ServerStatus.BadRequest).json({message:ServerMessage.UncorrectedReq})
+        } catch (e){
+            console.log(e)
+            return res.status(ServerStatus.Error).json({message:ServerMessage.Error})
+        }
+
+    }
+
+    static async deleteFile(req:RequestWithQuery<TDeleteFile>, res:Response){
+        try {
+            const file = await File.findOne({_id:req.query.id, user:req.userId}) as HydratedDocument<IFile>;
+            let path;
+
+            if(file.type === 'dir'){
+                path = `${MainAppConfig.FILE_PATH}\\${req.userId}\\${file.name}`
+                if(fs.existsSync(path)){
+                    return fs.rmdir(path,()=>{
+                        res.status(ServerStatus.Ok).json({message:'Dir deleted'})
+                    })
+                }
+            } else {
+                path = `${MainAppConfig.FILE_PATH}\\${req.userId}\\${file.path}\\${file.name}`
+                if(fs.existsSync(path)){
+                    return fs.unlink(path, ()=>{
+                        res.status(ServerStatus.Ok).json({message: 'File deleted'});
+                    })
+                }
+            }
+            return res.status(ServerStatus.BadRequest).json({message:ServerMessage.UncorrectedReq})
+        } catch (e){
+            console.log(e)
+            return res.status(ServerStatus.Error).json({message:ServerMessage.Error})
+        }
+    }
+
 }

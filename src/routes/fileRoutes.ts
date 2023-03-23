@@ -7,5 +7,7 @@ const fileRouter = Router();
 fileRouter.post('', authMiddleware, FileController.createDir)
 fileRouter.post('/uploadAlone', authMiddleware, FileController.uploadFile)
 fileRouter.get('', authMiddleware, FileController.getFiles)
+fileRouter.get('/download', authMiddleware, FileController.downloadFile)
+fileRouter.delete('/delete', authMiddleware, FileController.deleteFile)
 
 export default fileRouter

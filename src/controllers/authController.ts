@@ -2,7 +2,7 @@ import {Request, Response} from "express";
 import {validationResult} from "express-validator";
 import {ServerStatus} from "../enums/server/serverStatus";
 import {ServerMessage, ServerMessageUser} from "../enums/server/serverMessage";
-import User from "../models/userModel";
+import User, {IUser} from "../models/userModel";
 import SHA256 from "crypto-js/sha256";
 import {FileService} from "../services/fileService";
 import File from "../models/fileModel";
@@ -10,6 +10,7 @@ import {PassValid} from "../services/auth/auth";
 import jwt from "jsonwebtoken";
 import MainAppConfig from "../config/appConfig";
 import {RequestWithBody} from "../types/requestType";
+import {HydratedDocument} from "mongoose";
 
 type TRegistration = {
     email:string,
@@ -56,15 +57,7 @@ export class AuthController {
             }
             const token = jwt.sign({id:user._id}, MainAppConfig.SECRET_KEY, { expiresIn: '1h' });
             return res.status(ServerStatus.Ok).json({
-                token,
-                user: {
-                    user: user._id,
-                    email: user.email,
-                    diskStorage: user.diskStorage,
-                    usedStorage: user.usedStorage,
-                    avatar: user.avatar,
-                    files: user.files
-                }
+                token
             });
         } catch (e){
             console.log(e);
@@ -74,8 +67,18 @@ export class AuthController {
 
     static async auth(req:Request, res:Response){
         try{
-            const user = await User.findOne({_id:req.userId})
-            return res.status(ServerStatus.Ok).json(user)
+            const user = await User.findOne({_id:req.userId}) as HydratedDocument<IUser>;
+
+            return res.status(ServerStatus.Ok).json(
+                {
+                    id:user._id,
+                    email:user.email,
+                    diskStorage:user.diskStorage,
+                    usedStorage:user.usedStorage,
+                    avatar:user.avatar,
+                    files:user.files
+                }
+            )
         } catch (e){
             console.log(e);
             return res.status(ServerStatus.Error).json({message: ServerMessage.Error});
