@@ -1,21 +1,26 @@
-export type TCreateDir={
+export type TInputCreateDir={
     name:string,
     type:string,
     parent:string
 }
 
-export type TGetFiles={
+export type TInputGetFiles={
+    parent:string
+    sort:string
+}
+
+export type TInputUploadFile = {
     parent:string
 }
 
-export type TUploadFile = {
-    parent:string
-}
-
-export type TDowloadFile = {
+export type TInputDownloadFile = {
     id:string
 }
 
-export type TDeleteFile = {
+export type TInputDeleteFile = {
     id:string
+}
+
+export type TInputSearchFile = {
+    search: string
 }

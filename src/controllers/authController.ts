@@ -6,7 +6,7 @@ import User, {IUser} from "../models/userModel";
 import SHA256 from "crypto-js/sha256";
 import {FileService} from "../services/fileService";
 import File from "../models/fileModel";
-import {PassValid} from "../services/auth/auth";
+import {PassValid} from "../services/authService";
 import jwt from "jsonwebtoken";
 import MainAppConfig from "../config/appConfig";
 import {RequestWithBody} from "../types/requestType";

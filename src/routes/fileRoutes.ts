@@ -9,5 +9,6 @@ fileRouter.post('/uploadAlone', authMiddleware, FileController.uploadFile)
 fileRouter.get('', authMiddleware, FileController.getFiles)
 fileRouter.get('/download', authMiddleware, FileController.downloadFile)
 fileRouter.delete('/delete', authMiddleware, FileController.deleteFile)
+fileRouter.get('/search', authMiddleware, FileController.searchFiles)
 
 export default fileRouter

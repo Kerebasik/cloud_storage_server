@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import {NextFunction, Response, Request} from "express";
-import {ServerMessage} from "../enums/server/serverMessage";
+import {ServerMessageError} from "../enums/server/serverMessage";
 import {ServerStatus} from "../enums/server/serverStatus";
 import appConfig from "../config/appConfig";
 
@@ -26,13 +26,13 @@ export default function (req:Request, res:Response, next:NextFunction){
     try{
         const token = req.headers.authorization?.split(' ')[1]
         if(!token){
-            return res.status(ServerStatus.Unauthorized).json({message:ServerMessage.AuthError})
+            return res.status(ServerStatus.Unauthorized).json({message:ServerMessageError.AuthError})
         }
         const decode:TDecode = Object(jwt.verify(token, appConfig.SECRET_KEY))
         req.userId = decode.id;
         return next()
     } catch (e){
         console.log(e)
-        return res.status(ServerStatus.Unauthorized).json({message:ServerMessage.AuthError})
+        return res.status(ServerStatus.Unauthorized).json({message:ServerMessageError.AuthError})
     }
 }

@@ -1,19 +1,26 @@
 import {FileService} from "../services/fileService";
-import {Request, Response} from "express";
+import {Response} from "express";
 import File, {IFile} from "../models/fileModel";
 import { HydratedDocument } from 'mongoose';
 import fs from "fs";
-import {TCreateDir, TDeleteFile, TDowloadFile, TGetFiles, TUploadFile} from "../types/fileControllerType";
+import {
+    TInputCreateDir,
+    TInputGetFiles,
+    TInputDownloadFile,
+    TInputSearchFile,
+    TInputDeleteFile,
+    TInputUploadFile
+} from "../types/fileControllerType";
 import {UploadedFile} from "express-fileupload";
 import {ServerStatus} from "../enums/server/serverStatus";
-import {ServerMessage} from "../enums/server/serverMessage";
+import {ServerMessage, ServerMessageDisk, ServerMessageError, ServerMessageFile} from "../enums/server/serverMessage";
 import {RequestWithBody, RequestWithQuery} from "../types/requestType";
 import User, {IUser} from "../models/userModel";
 import MainAppConfig from "../config/appConfig";
 
 
 export class FileController {
-    static async createDir(req:Request<TCreateDir>, res:Response){
+    static async createDir(req:RequestWithBody<TInputCreateDir>, res:Response){
         try {
             const {name, type, parent} = req.body
             const file = new File({name, type, parent, user:req.userId});
@@ -35,17 +42,32 @@ export class FileController {
         }
     }
 
-    static async getFiles(req:RequestWithQuery<TGetFiles>, res:Response){
+    static async getFiles(req:RequestWithQuery<TInputGetFiles>, res:Response){
         try{
-            const files = await File.find({user:req.userId, parent:req.query.parent})
-            res.status(ServerStatus.Ok).json(files)
+            const sort = req.query.sort
+            let files
+            switch (sort){
+                case 'name':
+                    files = await File.find({user:req.userId, parent:req.query.parent}).sort({name:1})
+                    break;
+                case 'type':
+                    files = await File.find({user:req.userId, parent:req.query.parent}).sort({type:1})
+                    break;
+                case 'date':
+                    files = await File.find({user:req.userId, parent:req.query.parent}).sort({date:1})
+                    break;
+                default:
+                    files = await File.find({user:req.userId, parent:req.query.parent})
+                    break;
+            }
+            return res.status(ServerStatus.Ok).json(files)
         } catch (e){
             console.log(e)
-            res.status(ServerStatus.Error).json(ServerMessage.Error)
+            return res.status(ServerStatus.Error).json(ServerMessage.Error)
         }
     }
 
-    static async uploadFile(req:RequestWithBody<TUploadFile>, res:Response){
+    static async uploadFile(req:RequestWithBody<TInputUploadFile>, res:Response){
         try {
             const file = req.files?.file as UploadedFile;
 
@@ -53,7 +75,7 @@ export class FileController {
             const user = await User.findOne({_id:req.userId}) as HydratedDocument<IUser>
 
             if(user.usedStorage + file.size > user.diskStorage){
-                res.status(ServerStatus.BadRequest).json({message:'No space on the disk'})
+                res.status(ServerStatus.BadRequest).json({message:ServerMessageDisk.NoSpaceDisk})
             }
 
             user.usedStorage = user.usedStorage + file.size;
@@ -67,7 +89,7 @@ export class FileController {
             }
 
             if(fs.existsSync(path)){
-                return res.status(ServerStatus.BadRequest).json({message: 'File already exist'});
+                return res.status(ServerStatus.BadRequest).json({message: ServerMessageFile.FileAlready});
             }
             await file.mv(path);
             const type = file.name.split('.').pop();
@@ -90,14 +112,14 @@ export class FileController {
             parent.children.push(newFile._id)
             await parent.save();
             await user.save();
-            return res.status(201).json({message:'File is created'})
+            return res.status(201).json({message:ServerMessageFile.FileCreate})
         } catch (e){
             console.log(e)
-            return res.status(ServerStatus.Error).json({message:"Upload error"})
+            return res.status(ServerStatus.Error).json({message:ServerMessageError.UploadError})
         }
     }
 
-    static async downloadFile(req:RequestWithQuery<TDowloadFile>, res:Response){
+    static async downloadFile(req:RequestWithQuery<TInputDownloadFile>, res:Response){
         try {
             const file = await File.findOne({_id: req.query.id, user: req.userId}) as HydratedDocument<IFile>;
             const path = `${MainAppConfig.FILE_PATH}\\${req.userId}\\${file.path}\\${file.name}`;
@@ -112,19 +134,31 @@ export class FileController {
 
     }
 
-    static async deleteFile(req:RequestWithQuery<TDeleteFile>, res:Response){
+    static async deleteFile(req:RequestWithQuery<TInputDeleteFile>, res:Response){
         try {
             const file = await File.findOne({_id:req.query.id, user:req.userId}) as HydratedDocument<IFile>;
             if(!file){
-                return res.status(ServerStatus.NotFound).json({message:'File not found'})
+                return res.status(ServerStatus.NotFound).json({message:ServerMessageFile.FileNotFound})
             }
             FileService.deleteFileOrDir(file);
             await file.deleteOne();
-            return res.status(ServerStatus.Ok).json({message:'File was delete'})
+            return res.status(ServerStatus.Ok).json({message:ServerMessageFile.FileDelete})
         } catch (e){
             console.log(e)
             return res.status(ServerStatus.Error).json({message:ServerMessage.Error})
         }
     }
 
+    static async searchFiles(req:RequestWithQuery<TInputSearchFile>, res:Response){
+        try {
+            const search = req.query.search;
+            const files = await File.find({user:req.userId}) as Array<IFile>
+            files.filter(file => file.name.includes(search))
+            return res.status(ServerStatus.NotFound).json({files})
+        }
+        catch (e){
+            console.log(e)
+            return res.status(ServerStatus.BadRequest).json({message:ServerMessageError.SearchError})
+        }
+    }
 }

@@ -1,5 +1,5 @@
 import fileUpload from "express-fileupload";
-import {FileConfig} from '../enums/file'
+import {FileConfig} from '../config/fileConfig'
 
 
 export default fileUpload({

@@ -1,6 +1,6 @@
 import SHA256 from "crypto-js/sha256";
 
-type IPassValidFunc = {
+interface IPassValidFunc  {
     (password:string, userPasswordDB:string):boolean
 }
 
