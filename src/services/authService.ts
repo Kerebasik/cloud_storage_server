@@ -1,10 +1,12 @@
-import SHA256 from "crypto-js/sha256";
+import SHA256 from 'crypto-js/sha256';
 
-interface IPassValidFunc  {
-    (password:string, userPasswordDB:string):boolean
+interface IPassValidFunc {
+  (password: string, userPasswordDB: string): boolean;
 }
 
-export function PassValid<IPassValidFunc>(password:string, userPasswordDB:string):boolean{
-
-    return String(SHA256(password))===userPasswordDB
+export function PassValid<IPassValidFunc>(
+  passwordFromClient: string,
+  hashPasswordFromBD: string,
+): boolean {
+  return String(SHA256(passwordFromClient)) === hashPasswordFromBD;
 }

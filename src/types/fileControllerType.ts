@@ -1,26 +1,26 @@
-export type TInputCreateDir={
-    name:string,
-    type:string,
-    parent:string
-}
+export type TInputCreateDir = {
+  name: string;
+  type: string;
+  parent: string;
+};
 
-export type TInputGetFiles={
-    parent:string
-    sort:string
-}
+export type TInputGetFiles = {
+  parent: string;
+  sort: string;
+};
 
 export type TInputUploadFile = {
-    parent:string
-}
+  parent: string;
+};
 
 export type TInputDownloadFile = {
-    id:string
-}
+  id: string;
+};
 
 export type TInputDeleteFile = {
-    id:string
-}
+  id: string;
+};
 
 export type TInputSearchFile = {
-    search: string
-}
+  search: string;
+};
