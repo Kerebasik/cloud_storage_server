@@ -1,8 +1,8 @@
 .idea
 /node_modules/
-/src/files
+/files
 /dist
-
+/static
 yarn-error.log
 .pnp.*
 .yarn/*
