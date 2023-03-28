@@ -1,7 +1,7 @@
 import { describe } from 'mocha';
 import { assert } from 'chai';
 import SHA256 from 'crypto-js/sha256';
-import { PassValid } from '../../src/services/authService';
+import { PassValid } from '../../services/authService';
 
 const hashPasswordFromDB = String(SHA256('password'))
 

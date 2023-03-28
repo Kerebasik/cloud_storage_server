@@ -7,7 +7,6 @@ export interface IFile {
   _id: mongoose.Schema.Types.ObjectId;
   name: string;
   type: string;
-  access_link?: string;
   path: string;
   date: Date;
   size: number;
@@ -19,7 +18,6 @@ export interface IFile {
 const File = new Schema<IFile>({
   name: { type: MongooseType.String, required: true },
   type: { type: MongooseType.String, required: true },
-  access_link: { type: MongooseType.String },
   path: { type: MongooseType.String, default: '' },
   date: { type: MongooseType.Date, default: Date.now() },
   size: { type: MongooseType.Number, default: 0 },

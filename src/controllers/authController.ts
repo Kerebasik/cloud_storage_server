@@ -70,7 +70,7 @@ export class AuthController {
       const isPassValid = PassValid(password, user.password);
       if (!isPassValid) {
         return res
-          .status(ServerStatus.NotFound)
+          .status(ServerStatus.Unauthorized)
           .json({ message: ServerMessageUser.UserPassIsNotValid });
       }
       const token = jwt.sign({ id: user._id }, MainAppConfig.SECRET_KEY, {
@@ -94,7 +94,7 @@ export class AuthController {
       })) as HydratedDocument<IUser>;
 
       return res.status(ServerStatus.Ok).json({
-        id: user._id,
+        _id: user._id,
         email: user.email,
         diskStorage: user.diskStorage,
         usedStorage: user.usedStorage,

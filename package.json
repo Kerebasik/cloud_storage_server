@@ -6,8 +6,8 @@
     "watch": "tsc -w",
     "format": "prettier --write .\n",
     "test:unit": "mocha .\\dist\\tests\\unit\\*.test.js",
-    "dev": "nodemon .\\dist\\src\\index.js",
-    "start:prod": "node .\\dist\\src\\index.js"
+    "dev": "nodemon .\\dist\\index.js",
+    "start:prod": "node .\\dist\\index.js"
   },
   "license": "MIT",
   "dependencies": {
