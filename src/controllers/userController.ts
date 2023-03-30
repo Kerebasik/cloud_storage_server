@@ -35,7 +35,7 @@ export class UserController{
         user.avatar = undefined;
       })
       await user.save()
-      return res.status(ServerStatus.Ok).json('Avatar was delete')
+      return res.status(ServerStatus.ObjectCreated).json('Avatar was delete')
     } catch (e){
       console.log(e)
       return res.status(ServerStatus.Error).json(ServerMessage.Error)

@@ -39,7 +39,7 @@ export class FileController {
         await parentFile.save();
       }
       await file.save();
-      return res.json(file);
+      return res.status(ServerStatus.ObjectCreated).json(file);
     } catch (e) {
       console.log(e);
       return res.status(ServerStatus.Error).json(ServerMessage.Error);

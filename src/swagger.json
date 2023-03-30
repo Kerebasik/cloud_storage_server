@@ -3,19 +3,20 @@
   "info": {
     "title": "REST API for Swagger Documentation",
     "version": "1.0.0",
-    "description": "Cloud storage"
+    "description": "My cloud storage"
   },
   "servers": [{ "url": "http://localhost:3000/api" }],
   "tags": [{
-    "name": "Auth",
-    "description": "API for auth in the system"
-  },
+      "name": "Auth",
+      "description": "API for auth in the system"
+    },
     {
       "name": "User",
       "description": "API for user in the system"
-    }, {
+    },
+    {
       "name": "File",
-      "description": "API for user in the system"
+      "description": "API for file in the system"
     }],
   "paths": {
     "/auth/registration": {
@@ -46,7 +47,76 @@
           }
         },
         "responses": {
-
+          "201": {
+            "description": "User was created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email or password not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Auth error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with email already exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -216,34 +286,400 @@
         }
       }
     },
-    "/example": {
+    "/avatar":{
       "post": {
-        "tags": ["ExampleEndpoints"],
-        "summary": "Send a text to the server",
-        "description": "Send a message to the server and get a response added to the original text.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "User"
+        ],
+        "summary": "Post avatar for user in system",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "File"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User has new avatar",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "diskStorage": {
+                      "type": "number",
+                      "default":10737418240
+                    },
+                    "usedStorage": {
+                      "type": "number",
+                      "default": 0
+                    },
+                    "avatar": {
+                      "type": "string"
+                    },
+                    "files": {
+                      "type": "array",
+                      "example": ["FileId_1", "FileId_2"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Auth error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "User"
+        ],
+        "summary": "Delete avatar for user in system",
+        "responses": {
+          "201": {
+            "description": "Avatar was delete",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Auth error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "post": {
+        "summary": "Created dir",
+        "tags": [
+          "File"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ExampleSchemaHeader"
+                "type": "object",
+                "required": ["name", "type"],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "parent": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Success",
+            "description": "Dir was create",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ExampleSchemaBody"
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "date": {
+                      "type": "string"
+                    },
+                    "size": {
+                      "type": "number"
+                    },
+                    "user": {
+                      "type": "string"
+                    },
+                    "parent": {
+                      "type": "string"
+                    },
+                    "children": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
           },
-          "404": { "description": "Not found" },
-          "500": { "description": "Internal server error" }
+          "401": {
+            "description": "Auth error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "summary": "Find all files",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "sort",
+            "in": "query",
+            "examples": {
+              "name": {
+
+              },
+              "type": {
+
+              },
+              "date": {
+
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Find all files",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "date": {
+                      "type": "string"
+                    },
+                    "size": {
+                      "type": "number"
+                    },
+                    "user": {
+                      "type": "string"
+                    },
+                    "parent": {
+                      "type": "string"
+                    },
+                    "children": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Auth error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uploadAlone": {
+      "post": {
+        "summary": "",
+        "operationId": "",
+        "parameters": [
+
+        ],
+        "responses": {
+
+        }
+      }
+    },
+    "/download": {
+      "get": {
+        "summary": "",
+        "operationId": "",
+        "parameters": [
+
+        ],
+        "responses": {
+
+        }
+      }
+    },
+    "/delete": {
+      "delete": {
+        "summary": "",
+        "operationId": "",
+        "parameters": [
+
+        ],
+        "responses": {
+
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "summary": "",
+        "operationId": "",
+        "parameters": [
+
+        ],
+        "responses": {
+
         }
       }
     }
@@ -274,7 +710,7 @@
           },
           "files": {
             "type": "array",
-            "example": "$ref File"
+            "example": ["FileId_1", "FileId_2"]
           }
         }
       },
@@ -291,6 +727,9 @@
           "type": {
             "type": "string"
           },
+          "date": {
+            "type": "date"
+          },
           "path": {
             "type": "string"
           },
@@ -303,28 +742,11 @@
           },
           "parent": {
             "type": "string",
-            "example":"$ref File"
+            "example":"FileId_1"
           },
           "children": {
-            "type": "string",
-            "example":"$ref File"
-          }
-        }
-      },
-      "ExampleSchemaBody": {
-        "properties": {
-          "responseText": {
-            "type": "string",
-            "example": "This is some example string! This is an endpoint"
-          }
-        }
-      },
-      "ExampleSchemaHeader": {
-        "required": ["text"],
-        "properties": {
-          "text": {
-            "type": "string",
-            "example": "This is some example string!"
+            "type": "array",
+            "example":["FileId_1","FileId_2"]
           }
         }
       }

@@ -41,14 +41,14 @@ export class AuthController {
       const candidate = await User.findOne({ email });
       if (candidate) {
         return res
-          .status(ServerStatus.BadRequest)
+          .status(ServerStatus.Conflict)
           .json({ message: ServerMessageUser.UserWithEmailAlready });
       }
       const hashPassword = await SHA256(password);
       const newUser = await User.create({ email, password: hashPassword });
       await FileService.createDir(new File({ user: newUser.id, name: '' }));
       return res
-        .status(ServerStatus.Ok)
+        .status(ServerStatus.ObjectCreated)
         .json({ message: ServerMessageUser.UserCreated });
     } catch (e) {
       console.log(e);
@@ -74,7 +74,7 @@ export class AuthController {
           .json({ message: ServerMessageUser.UserPassIsNotValid });
       }
       const token = jwt.sign({ id: user._id }, MainAppConfig.SECRET_KEY, {
-        expiresIn: '1h',
+        expiresIn: '30m',
       });
       return res.status(ServerStatus.Ok).json({
         token,
