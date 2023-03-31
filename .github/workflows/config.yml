@@ -1,4 +1,4 @@
-name: Cloud Server
+name: CI Cloud Server
 on:
   push:
     branches: [ main ]
@@ -22,6 +22,8 @@ jobs:
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
       - name: install modules
-        run: npm install
+        run: yarn install
+      - name: created dist
+        run: yarn run ts:start
       - name: tests
-        run: npm run unit
+        run: yarn run unit

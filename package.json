@@ -4,6 +4,7 @@
   "main": "src/index.ts",
   "scripts": {
     "watch": "tsc -w",
+    "ts:start": "tsc",
     "format": "prettier --write .\n",
     "unit": "mocha ./dist/tests/unit/*.test.js",
     "dev": "nodemon .\\dist\\index.js",
