@@ -948,7 +948,8 @@
         "required": ["email", "password"],
         "properties": {
           "_id": {
-            "type": "string"
+            "type": "string",
+            "example": "ObjectId"
           },
           "email": {
             "type": "string"
@@ -1006,6 +1007,24 @@
             "example":["FileId_1","FileId_2"]
           }
         }
+      },
+      "RefreshToken": {
+        "type": "object",
+        "required": ["token"],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "ObjectId"
+          },
+          "user":{
+            "type": "string",
+            "example": "$ref User"
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+
       }
     },
     "securitySchemes": {
