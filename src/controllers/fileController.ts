@@ -99,7 +99,7 @@ export class FileController {
       })) as HydratedDocument<IUser>;
 
       if (user.usedStorage + file.size > user.diskStorage) {
-        res
+        return res
           .status(ServerStatus.BadRequest)
           .json({ message: ServerMessageDisk.NoSpaceDisk });
       }
@@ -189,7 +189,7 @@ export class FileController {
       FileService.deleteFileOrDir(file);
       await file.deleteOne();
       return res
-        .status(ServerStatus.Ok)
+        .status(ServerStatus.ObjectCreated)
         .json({ message: ServerMessageFile.FileDelete });
     } catch (e) {
       console.log(e);
@@ -206,8 +206,11 @@ export class FileController {
     try {
       const search = req.query.search;
       const files = (await File.find({ user: req.userId })) as Array<IFile>;
+      if(!files){
+        return res.status(ServerStatus.NotFound).json(ServerMessageFile.FileNotFound)
+      }
       files.filter((file) => file.name.includes(search));
-      return res.status(ServerStatus.NotFound).json({ files });
+      return res.status(ServerStatus.Ok).json({ files });
     } catch (e) {
       console.log(e);
       return res
