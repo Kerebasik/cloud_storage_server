@@ -26,4 +26,4 @@ jobs:
       - name: created dist
         run: yarn run ts:start
       - name: tests
-        run: yarn run unit
+        run: yarn run test:unit
