@@ -549,20 +549,16 @@
           "File"
         ],
         "summary": "Find all files",
-        "operationId": "",
         "parameters": [
           {
             "name": "sort",
             "in": "query",
             "examples": {
               "name": {
-
               },
               "type": {
-
               },
               "date": {
-
               }
             }
           }
@@ -637,48 +633,309 @@
     },
     "/uploadAlone": {
       "post": {
-        "summary": "",
-        "operationId": "",
-        "parameters": [
-
+        "summary": "Upload file on server",
+        "tags": [
+          "File"
         ],
+        "requestBody": {
+          "required": true,
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "file": {
+                      "type": "File"
+                    }
+                  }
+                }
+              }
+            }
+        },
         "responses": {
-
+          "201": {
+            "description": "File is create",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "File already exist or No space on the disk",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Auth error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
     "/download": {
       "get": {
-        "summary": "",
-        "operationId": "",
+        "tags": [
+          "File"
+        ],
+        "summary": "Download file from server",
         "parameters": [
-
+          {
+            "name": "id",
+            "in": "query"
+          }
         ],
         "responses": {
-
+          "201": {
+            "description": "File is download"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Auth error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
     "/delete": {
       "delete": {
-        "summary": "",
-        "operationId": "",
+        "tags": [
+          "File"
+        ],
+        "summary": "Delete file on server",
         "parameters": [
-
+          {
+            "name": "id",
+            "in": "query"
+          }
         ],
         "responses": {
-
+          "201": {
+            "description": "File was delete",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Auth error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
     "/search": {
       "get": {
-        "summary": "",
-        "operationId": "",
+        "tags": [
+          "File"
+        ],
+        "summary": "Search files in system for user",
         "parameters": [
-
+          {
+           "name": "search",
+            "in": "query"
+          }
         ],
         "responses": {
+          "200": {
+            "description": "File was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "date": {
+                      "type": "string"
+                    },
+                    "size": {
+                      "type": "number"
+                    },
+                    "user": {
+                      "type": "string"
+                    },
+                    "parent": {
+                      "type": "string"
+                    },
+                    "children": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Auth error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
 
         }
       }
