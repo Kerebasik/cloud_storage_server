@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ main ]
 jobs:
-  init:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -21,6 +21,7 @@ jobs:
         uses: supercharge/mongodb-github-action@1.8.0
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
+          port: 27017
       - name: install modules
         run: yarn install
       - name: created dist

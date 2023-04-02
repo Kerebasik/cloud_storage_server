@@ -3,7 +3,7 @@ import MainAppConfig from './config/appConfig';
 import mongoose from 'mongoose';
 
 const PORT: number = MainAppConfig.PORT || 3000;
-const DB_URL: string = MainAppConfig.DB_URL;
+const DB_URL: string = MainAppConfig.DB_URL || 27017;
 
 const start = async () => {
   try {
