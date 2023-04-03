@@ -1,10 +1,11 @@
 import fs from 'fs';
-import MainAppConfig from '../config/appConfig';
+import {Request} from 'express'
 import { IFile } from '../models/fileModel';
 
+
 export class FileService {
-  static createDir(file: IFile) {
-    const filePath = `${MainAppConfig.FILE_PATH}\\${file.user}\\${file.path}`;
+  static createDir(req:Request, file: IFile) {
+    const filePath = `${req.filePath}\\${file.user}\\${file.path}`;
     return new Promise((resolve, reject) => {
       try {
         if (!fs.existsSync(filePath)) {
@@ -19,9 +20,9 @@ export class FileService {
     });
   }
 
-  static deleteFileOrDir(file: IFile) {
+  static deleteFileOrDir(req: Request, file: IFile) {
     try {
-      const path = `${MainAppConfig.FILE_PATH}\\${file.user}\\${file.path}`;
+      const path = `${req.filePath}\\${file.user}\\${file.path}`;
       if (fs.existsSync(path)) {
         if (file.type === 'dir') {
           return fs.rmdirSync(path);

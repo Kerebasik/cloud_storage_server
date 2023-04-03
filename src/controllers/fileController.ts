@@ -21,7 +21,6 @@ import {
 } from '../enums/server/serverMessage';
 import { RequestWithBody, RequestWithQuery } from '../types/requestType';
 import User, { IUser } from '../models/userModel';
-import MainAppConfig from '../config/appConfig';
 
 export class FileController {
   static async createDir(req: RequestWithBody<TInputCreateDir>, res: Response) {
@@ -31,10 +30,10 @@ export class FileController {
       const parentFile = await File.findOne({ _id: parent });
       if (!parentFile) {
         file.path = name;
-        await FileService.createDir(file);
+        await FileService.createDir(req,file);
       } else {
         file.path = `${parentFile.path}\\${file.name}`;
-        await FileService.createDir(file);
+        await FileService.createDir(req,file);
         parentFile.children.push(file._id);
         await parentFile.save();
       }
@@ -109,9 +108,9 @@ export class FileController {
       let path;
 
       if (parent) {
-        path = `${MainAppConfig.FILE_PATH}\\${user._id}\\${parent.path}\\${file.name}`;
+        path = `${req.filePath}\\${user._id}\\${parent.path}\\${file.name}`;
       } else {
-        path = `${MainAppConfig.FILE_PATH}\\${user._id}\\${file.name}`;
+        path = `${req.filePath}\\${user._id}\\${file.name}`;
       }
 
       if (fs.existsSync(path)) {
@@ -157,7 +156,7 @@ export class FileController {
         _id: req.query.id,
         user: req.userId,
       })) as HydratedDocument<IFile>;
-      const path = `${MainAppConfig.FILE_PATH}\\${req.userId}\\${file.path}\\${file.name}`;
+      const path = `${req.filePath}\\${req.userId}\\${file.path}\\${file.name}`;
       if (fs.existsSync(path)) {
         return res.download(path, file.name);
       }
@@ -186,7 +185,7 @@ export class FileController {
           .status(ServerStatus.NotFound)
           .json({ message: ServerMessageFile.FileNotFound });
       }
-      FileService.deleteFileOrDir(file);
+      FileService.deleteFileOrDir(req,file);
       await file.deleteOne();
       return res
         .status(ServerStatus.ObjectCreated)

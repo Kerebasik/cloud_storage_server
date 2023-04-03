@@ -5,7 +5,6 @@ import { ServerStatus } from '../enums/server/serverStatus';
 import { ServerMessage, ServerMessageFile } from '../enums/server/serverMessage';
 import { UploadedFile } from 'express-fileupload';
 import { v4 as uuidv4 } from 'uuid';
-import MainAppConfig from '../config/appConfig';
 import fs from 'fs';
 
 export class UserController{
@@ -17,7 +16,7 @@ export class UserController{
       }
       const user = await User.findById(req.userId) as HydratedDocument<IUser>
       const userAvatar = uuidv4() + file.name
-      const path =`${MainAppConfig.AVATAR_PATH}\\${userAvatar}`
+      const path =`${req.avatarPath}\\${userAvatar}`
       user.avatar = userAvatar
       await file.mv(path)
       await user.save();
@@ -31,7 +30,7 @@ export class UserController{
   static async deleteAvatar(req:Request, res:Response){
     try {
       const user = await User.findById(req.userId) as HydratedDocument<IUser>
-      fs.unlink(`${MainAppConfig.AVATAR_PATH}\\${user.avatar}`, ()=>{
+      fs.unlink(`${req.avatarPath}\\${user.avatar}`, ()=>{
         user.avatar = undefined;
       })
       await user.save()

@@ -46,7 +46,7 @@ export class AuthController {
       }
       const hashPassword = await SHA256(password);
       const newUser = await User.create({ email, password: hashPassword });
-      await FileService.createDir(new File({ user: newUser.id, name: '' }));
+      await FileService.createDir(req, new File({ user: newUser.id, name: '' }));
       return res
         .status(ServerStatus.ObjectCreated)
         .json({ message: ServerMessageUser.UserCreated });
