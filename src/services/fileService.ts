@@ -1,10 +1,9 @@
 import fs from 'fs';
-import {Request} from 'express'
+import { Request } from 'express';
 import { IFile } from '../models/fileModel';
 
-
 export class FileService {
-  static createDir(req:Request, file: IFile) {
+  static createDir(req: Request, file: IFile) {
     const filePath = `${req.filePath}\\${file.user}\\${file.path}`;
     return new Promise((resolve, reject) => {
       try {

@@ -6,7 +6,8 @@
     "description": "My cloud storage"
   },
   "servers": [{ "url": "http://localhost:3000/api" }],
-  "tags": [{
+  "tags": [
+    {
       "name": "Auth",
       "description": "API for auth in the system"
     },
@@ -17,14 +18,13 @@
     {
       "name": "File",
       "description": "API for file in the system"
-    }],
+    }
+  ],
   "paths": {
     "/auth/registration": {
       "post": {
         "summary": "Created new user in system",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "security": [],
         "requestBody": {
           "required": true,
@@ -122,28 +122,26 @@
     },
     "/auth/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Get auth token for user in system",
         "security": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": ["email", "password"],
-                  "properties": {
-                    "email": {
-                      "uniqueItems": true,
-                      "type": "string"
-                    },
-                    "password": {
-                      "type": "string"
-                    }
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "uniqueItems": true,
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
                   }
                 }
+              }
             }
           }
         },
@@ -236,7 +234,7 @@
                     },
                     "diskStorage": {
                       "type": "number",
-                      "default":10737418240
+                      "default": 10737418240
                     },
                     "usedStorage": {
                       "type": "number",
@@ -286,16 +284,14 @@
         }
       }
     },
-    "/avatar":{
+    "/avatar": {
       "post": {
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Post avatar for user in system",
         "requestBody": {
           "required": true,
@@ -328,7 +324,7 @@
                     },
                     "diskStorage": {
                       "type": "number",
-                      "default":10737418240
+                      "default": 10737418240
                     },
                     "usedStorage": {
                       "type": "number",
@@ -399,9 +395,7 @@
             "BearerAuth": []
           }
         ],
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Delete avatar for user in system",
         "responses": {
           "201": {
@@ -452,9 +446,7 @@
     "/": {
       "post": {
         "summary": "Created dir",
-        "tags": [
-          "File"
-        ],
+        "tags": ["File"],
         "requestBody": {
           "required": true,
           "content": {
@@ -545,21 +537,16 @@
         }
       },
       "get": {
-        "tags": [
-          "File"
-        ],
+        "tags": ["File"],
         "summary": "Find all files",
         "parameters": [
           {
             "name": "sort",
             "in": "query",
             "examples": {
-              "name": {
-              },
-              "type": {
-              },
-              "date": {
-              }
+              "name": {},
+              "type": {},
+              "date": {}
             }
           }
         ],
@@ -634,23 +621,21 @@
     "/uploadAlone": {
       "post": {
         "summary": "Upload file on server",
-        "tags": [
-          "File"
-        ],
+        "tags": ["File"],
         "requestBody": {
           "required": true,
-            "content": {
-              "multipart/form-data": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "file": {
-                      "type": "File"
-                    }
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "File"
                   }
                 }
               }
             }
+          }
         },
         "responses": {
           "201": {
@@ -714,9 +699,7 @@
     },
     "/download": {
       "get": {
-        "tags": [
-          "File"
-        ],
+        "tags": ["File"],
         "summary": "Download file from server",
         "parameters": [
           {
@@ -775,9 +758,7 @@
     },
     "/delete": {
       "delete": {
-        "tags": [
-          "File"
-        ],
+        "tags": ["File"],
         "summary": "Delete file on server",
         "parameters": [
           {
@@ -847,13 +828,11 @@
     },
     "/search": {
       "get": {
-        "tags": [
-          "File"
-        ],
+        "tags": ["File"],
         "summary": "Search files in system for user",
         "parameters": [
           {
-           "name": "search",
+            "name": "search",
             "in": "query"
           }
         ],
@@ -936,7 +915,6 @@
               }
             }
           }
-
         }
       }
     }
@@ -996,15 +974,15 @@
           },
           "user": {
             "type": "string",
-            "example":"$ref User"
+            "example": "$ref User"
           },
           "parent": {
             "type": "string",
-            "example":"FileId_1"
+            "example": "FileId_1"
           },
           "children": {
             "type": "array",
-            "example":["FileId_1","FileId_2"]
+            "example": ["FileId_1", "FileId_2"]
           }
         }
       },
@@ -1016,7 +994,7 @@
             "type": "string",
             "example": "ObjectId"
           },
-          "user":{
+          "user": {
             "type": "string",
             "example": "$ref User"
           },
@@ -1024,7 +1002,6 @@
             "type": "string"
           }
         }
-
       }
     },
     "securitySchemes": {
@@ -1034,7 +1011,9 @@
       }
     }
   },
-  "security": [{
-    "BearerAuth": []
-  }]
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ]
 }

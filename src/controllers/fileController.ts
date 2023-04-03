@@ -30,10 +30,10 @@ export class FileController {
       const parentFile = await File.findOne({ _id: parent });
       if (!parentFile) {
         file.path = name;
-        await FileService.createDir(req,file);
+        await FileService.createDir(req, file);
       } else {
         file.path = `${parentFile.path}\\${file.name}`;
-        await FileService.createDir(req,file);
+        await FileService.createDir(req, file);
         parentFile.children.push(file._id);
         await parentFile.save();
       }
@@ -156,7 +156,7 @@ export class FileController {
         _id: req.query.id,
         user: req.userId,
       })) as HydratedDocument<IFile>;
-      const path = `${req.filePath}\\${req.userId}\\${file.path}\\${file.name}`;
+      const path = `${req.filePath}\\${req.userId}\\${file.path}`;
       if (fs.existsSync(path)) {
         return res.download(path, file.name);
       }
@@ -185,7 +185,7 @@ export class FileController {
           .status(ServerStatus.NotFound)
           .json({ message: ServerMessageFile.FileNotFound });
       }
-      FileService.deleteFileOrDir(req,file);
+      FileService.deleteFileOrDir(req, file);
       await file.deleteOne();
       return res
         .status(ServerStatus.ObjectCreated)
@@ -205,8 +205,10 @@ export class FileController {
     try {
       const search = req.query.search;
       const files = (await File.find({ user: req.userId })) as Array<IFile>;
-      if(!files){
-        return res.status(ServerStatus.NotFound).json(ServerMessageFile.FileNotFound)
+      if (!files) {
+        return res
+          .status(ServerStatus.NotFound)
+          .json(ServerMessageFile.FileNotFound);
       }
       files.filter((file) => file.name.includes(search));
       return res.status(ServerStatus.Ok).json({ files });

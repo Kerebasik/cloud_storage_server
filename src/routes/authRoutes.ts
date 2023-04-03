@@ -12,6 +12,6 @@ authRoutes.post(
   AuthController.registration,
 );
 authRoutes.post('/login', AuthController.login);
-authRoutes.post('/auth', authMiddleware, AuthController.auth);
+authRoutes.post('/', authMiddleware, AuthController.auth);
 
 export default authRoutes;
