@@ -34,7 +34,7 @@ export class UserController {
     try {
       const user = (await User.findById(req.userId)) as HydratedDocument<IUser>;
       fs.unlink(`${req.avatarPath}\\${user.avatar}`, () => {
-        user.avatar = undefined;
+        user.avatar = '';
       });
       await user.save();
       return res.status(ServerStatus.ObjectCreated).json('Avatar was delete');
