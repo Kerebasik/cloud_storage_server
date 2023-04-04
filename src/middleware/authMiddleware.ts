@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 import { NextFunction, Response, Request } from 'express';
 import { ServerMessageError } from '../enums/server/serverMessage';
 import { ServerStatus } from '../enums/server/serverStatus';
-import appConfig from '../config/appConfig';
 
 declare global {
   namespace Express {
@@ -13,7 +12,7 @@ declare global {
 }
 
 type TDecode = {
-  id: string;
+  _id: string;
   iat: number;
   exp: number;
 };
@@ -29,8 +28,10 @@ export default function (req: Request, res: Response, next: NextFunction) {
         .status(ServerStatus.Unauthorized)
         .json({ message: ServerMessageError.AuthError });
     }
-    const decode: TDecode = Object(jwt.verify(token, appConfig.SECRET_KEY));
-    req.userId = decode.id;
+    const decode: TDecode = Object(
+      jwt.verify(token, String(process.env.ACCESS_TOKEN_SECRET_KEY)),
+    );
+    req.userId = decode._id;
     return next();
   } catch (e) {
     console.log(e);

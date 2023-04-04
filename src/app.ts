@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+import * as dotenv from 'dotenv';
 import express, { Express } from 'express';
 import authRoutes from './routes/authRoutes';
 import fileRouter from './routes/fileRoutes';
@@ -12,6 +14,8 @@ import * as swaggerDocument from './swagger.json';
 
 import swaggerUi from 'swagger-ui-express';
 import avatarPath from './middleware/avatarPathModdleware';
+
+dotenv.config();
 
 (() => {
   try {
@@ -42,4 +46,18 @@ app.use('/api/auth', authRoutes);
 app.use('/api/file', fileRouter);
 app.use('/api/user', userRouter);
 
-export default app;
+const PORT: number = Number(process.env.PORT) || 3000;
+const DB_URL: string = 'mongodb://127.0.0.1:27017/cloudStorageDB';
+
+const start = async () => {
+  try {
+    await mongoose.connect(DB_URL);
+    app.listen(PORT, () => {
+      console.log('Server is ready');
+    });
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+start();

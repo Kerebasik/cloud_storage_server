@@ -10,12 +10,12 @@ import SHA256 from 'crypto-js/sha256';
 import { FileService } from '../services/fileService';
 import File from '../models/fileModel';
 import { PassValid } from '../services/authService';
-import jwt from 'jsonwebtoken';
-import MainAppConfig from '../config/appConfig';
 import { RequestWithBody } from '../types/requestType';
 import { HydratedDocument } from 'mongoose';
 import { TInputRegistration, TInputLogin } from '../types/authControllerType';
 import UserDto from '../dtos/userDto';
+import TokenService from '../services/tokenService';
+import TokenModel from '../models/tokenModel';
 
 export class AuthController {
   static async registration(
@@ -36,12 +36,21 @@ export class AuthController {
           .status(ServerStatus.Conflict)
           .json({ message: ServerMessageUser.UserWithEmailAlready });
       }
-      const hashPassword = await SHA256(password);
+      const hashPassword = SHA256(password);
       const newUser = await User.create({ email, password: hashPassword });
       await FileService.createDir(
         req,
         new File({ user: newUser.id, name: '' }),
       );
+
+      const tokens = await TokenService.generateTokens({ _id: newUser._id });
+      await TokenModel.create({
+        user: newUser._id,
+        token: tokens.refreshToken,
+      });
+      res.cookie('refreshToken', tokens.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
       return res
         .status(ServerStatus.ObjectCreated)
         .json({ message: ServerMessageUser.UserCreated });
@@ -68,11 +77,9 @@ export class AuthController {
           .status(ServerStatus.Unauthorized)
           .json({ message: ServerMessageUser.UserPassIsNotValid });
       }
-      const token = jwt.sign({ id: user._id }, MainAppConfig.SECRET_KEY, {
-        expiresIn: '30m',
-      });
+      const tokens = TokenService.generateTokens({ _id: user._id });
       return res.status(ServerStatus.Ok).json({
-        token,
+        ...tokens,
       });
     } catch (e) {
       console.log(e);
@@ -99,5 +106,9 @@ export class AuthController {
     }
   }
 
-  static async logout(req: Request, res: Response) {}
+  static async logout(req: Request, res: Response) {
+    const refreshToken = req.cookies;
+  }
+
+  static refresh(req: Request, res: Response) {}
 }

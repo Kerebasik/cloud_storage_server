@@ -7,12 +7,13 @@
     "ts:start": "tsc",
     "format": "prettier --write .\n",
     "test:unit": "mocha ./dist/tests/unit/*.test.js",
-    "dev": "nodemon .\\dist\\index.js",
-    "start:prod": "node .\\dist\\index.js"
+    "dev": "nodemon .\\dist\\app.js",
+    "start:prod": "node .\\dist\\app.js"
   },
   "license": "MIT",
   "dependencies": {
     "crypto-js": "~4.1.1",
+    "dotenv": "^16.0.3",
     "express": "~4.18.2",
     "express-fileupload": "~1.4.0",
     "express-validator": "~6.15.0",
