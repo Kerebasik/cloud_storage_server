@@ -14,20 +14,12 @@ import jwt from 'jsonwebtoken';
 import MainAppConfig from '../config/appConfig';
 import { RequestWithBody } from '../types/requestType';
 import { HydratedDocument } from 'mongoose';
-
-type TRegistration = {
-  email: string;
-  password: string;
-};
-
-type TLogin = {
-  email: string;
-  password: string;
-};
+import { TInputRegistration, TInputLogin } from '../types/authControllerType';
+import UserDto from '../dtos/userDto';
 
 export class AuthController {
   static async registration(
-    req: RequestWithBody<TRegistration>,
+    req: RequestWithBody<TInputRegistration>,
     res: Response,
   ) {
     try {
@@ -61,7 +53,7 @@ export class AuthController {
     }
   }
 
-  static async login(req: RequestWithBody<TLogin>, res: Response) {
+  static async login(req: RequestWithBody<TInputLogin>, res: Response) {
     try {
       const { email, password } = req.body;
       const user = await User.findOne({ email });
@@ -96,14 +88,9 @@ export class AuthController {
         _id: req.userId,
       })) as HydratedDocument<IUser>;
 
-      return res.status(ServerStatus.Ok).json({
-        _id: user._id,
-        email: user.email,
-        diskStorage: user.diskStorage,
-        usedStorage: user.usedStorage,
-        avatar: user.avatar,
-        files: user.files,
-      });
+      const userDto = new UserDto(user);
+
+      return res.status(ServerStatus.Ok).json(userDto);
     } catch (e) {
       console.log(e);
       return res
@@ -111,4 +98,6 @@ export class AuthController {
         .json({ message: ServerMessage.Error });
     }
   }
+
+  static async logout(req: Request, res: Response) {}
 }
