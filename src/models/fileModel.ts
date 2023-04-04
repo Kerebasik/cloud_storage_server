@@ -1,5 +1,5 @@
 import mongoose, { Schema, model } from 'mongoose';
-import { MongooseType } from '../types/mongoose/mongoseType';
+import { MongooseType } from '../types/mongoseType';
 
 mongoose.set('strictQuery', true);
 
