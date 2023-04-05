@@ -13,5 +13,9 @@ authRoutes.post(
 );
 authRoutes.post('/login', AuthController.login);
 authRoutes.post('/', authMiddleware, AuthController.auth);
+authRoutes.get('/refresh', () => {
+  console.log('refresh');
+});
+authRoutes.get('/logout', AuthController.logout);
 
 export default authRoutes;

@@ -30,12 +30,14 @@ export class AuthController {
           .json({ message: ServerMessage.UncorrectedReq, errors });
       }
       const { email, password } = req.body;
+
       const candidate = await User.findOne({ email });
       if (candidate) {
         return res
           .status(ServerStatus.Conflict)
           .json({ message: ServerMessageUser.UserWithEmailAlready });
       }
+
       const hashPassword = SHA256(password);
       const newUser = await User.create({ email, password: hashPassword });
       await FileService.createDir(
@@ -50,6 +52,7 @@ export class AuthController {
       });
       res.cookie('refreshToken', tokens.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
       });
       return res
         .status(ServerStatus.ObjectCreated)
@@ -78,6 +81,11 @@ export class AuthController {
           .json({ message: ServerMessageUser.UserPassIsNotValid });
       }
       const tokens = TokenService.generateTokens({ _id: user._id });
+      await TokenModel.create({ user: user._id, token: tokens.refreshToken });
+      res.cookie('refreshToken', tokens.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
       return res.status(ServerStatus.Ok).json({
         ...tokens,
       });
@@ -107,8 +115,25 @@ export class AuthController {
   }
 
   static async logout(req: Request, res: Response) {
-    const refreshToken = req.cookies;
+    try {
+      const { refreshToken } = req.cookies;
+      const token = await TokenModel.findOneAndDelete({ token: refreshToken });
+      res.clearCookie('refreshToken');
+      return res.status(201).json({
+        message: 'Logout',
+        token,
+      });
+    } catch (e) {
+      console.log(e);
+      return res.status(ServerStatus.Error).json(ServerMessage.Error);
+    }
   }
 
-  static refresh(req: Request, res: Response) {}
+  static refresh(req: Request, res: Response) {
+    try {
+    } catch (e) {
+      console.log(e);
+      return res.status(ServerStatus.Error).json(ServerMessage.Error);
+    }
+  }
 }

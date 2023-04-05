@@ -8,6 +8,7 @@ import cors from './middleware/corsMiddleware';
 import userRouter from './routes/userRoutes';
 import filePathMiddleware from './middleware/filePathMiddleware';
 import path from 'path';
+import cookieParser from 'cookie-parser';
 import fs from 'fs';
 
 import * as swaggerDocument from './swagger.json';
@@ -39,6 +40,7 @@ app.use(express.json());
 app.use(express.static(path.resolve(__dirname, 'static')));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(expressFileUpload);
+app.use(cookieParser());
 app.use(cors);
 app.use(filePathMiddleware(path.resolve(__dirname, 'files')));
 app.use(avatarPath(path.resolve(__dirname, 'static')));
