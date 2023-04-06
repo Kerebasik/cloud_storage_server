@@ -6,8 +6,8 @@ mongoose.set('strictQuery', true);
 export interface IRefreshToken {
   _id: mongoose.Schema.Types.ObjectId;
   user: mongoose.Schema.Types.ObjectId;
-  token: mongoose.Schema.Types.String;
-  date: mongoose.Schema.Types.Date;
+  token: string;
+  date: Date;
 }
 
 const RefreshToken = new Schema<IRefreshToken>({

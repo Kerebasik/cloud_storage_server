@@ -3,6 +3,7 @@ import { validationResult } from 'express-validator';
 import { ServerStatus } from '../enums/server/serverStatus';
 import {
   ServerMessage,
+  ServerMessageError,
   ServerMessageUser,
 } from '../enums/server/serverMessage';
 import User, { IUser } from '../models/userModel';
@@ -16,6 +17,7 @@ import { TInputRegistration, TInputLogin } from '../types/authControllerType';
 import UserDto from '../dtos/userDto';
 import TokenService from '../services/tokenService';
 import TokenModel from '../models/tokenModel';
+import UserModel from '../models/userModel';
 
 export class AuthController {
   static async registration(
@@ -117,9 +119,9 @@ export class AuthController {
   static async logout(req: Request, res: Response) {
     try {
       const { refreshToken } = req.cookies;
-      const token = await TokenModel.findOneAndDelete({ token: refreshToken });
+      const token = TokenService.removeToken(refreshToken);
       res.clearCookie('refreshToken');
-      return res.status(201).json({
+      return res.status(ServerStatus.Ok).json({
         message: 'Logout',
         token,
       });
@@ -129,8 +131,34 @@ export class AuthController {
     }
   }
 
-  static refresh(req: Request, res: Response) {
+  static async refresh(req: Request, res: Response) {
     try {
+      const { refreshToken } = req.cookies;
+      if (!refreshToken) {
+        return res
+          .status(ServerStatus.Unauthorized)
+          .json(ServerMessageError.AuthError);
+      }
+      const userData = TokenService.validateRefreshToken(refreshToken);
+      const userFromBD = TokenService.findToken(refreshToken);
+      if (!userData || !userFromBD) {
+        return res
+          .status(ServerStatus.Unauthorized)
+          .json(ServerMessageError.AuthError);
+      }
+      const user = (await UserModel.findById(
+        userData._id,
+      )) as HydratedDocument<IUser>;
+      const userDto = new UserDto(user);
+      const tokens = TokenService.generateTokens({ _id: user._id });
+
+      await TokenService.saveToken(userDto._id, tokens.refreshToken);
+
+      res.cookie('refreshToken', tokens.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
+      return res.status(ServerStatus.Ok).json({ userDto, ...tokens });
     } catch (e) {
       console.log(e);
       return res.status(ServerStatus.Error).json(ServerMessage.Error);

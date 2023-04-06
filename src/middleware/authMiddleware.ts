@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-type TDecode = {
+export type TDecode = {
   _id: string;
   iat: number;
   exp: number;
