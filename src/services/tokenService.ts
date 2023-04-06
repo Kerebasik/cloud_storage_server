@@ -48,7 +48,9 @@ class TokenService {
   }
 
   static async findToken(token: string) {
-    const tokenFromDB = await TokenModel.findOne({ token: token });
+    const tokenFromDB = (await TokenModel.findOne({
+      token: token,
+    })) as HydratedDocument<IRefreshToken>;
     return tokenFromDB;
   }
 
@@ -73,7 +75,7 @@ class TokenService {
     let token;
     if (tokenData) {
       tokenData.token = refreshToken;
-      await tokenData.save();
+      return await tokenData.save();
     }
     token = await TokenModel.create({
       user: userId,
