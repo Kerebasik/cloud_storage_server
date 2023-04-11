@@ -55,9 +55,9 @@ describe('Tests AuthService', () => {
       name: 'John Sins',
     };
     type TestObject = {
-      _id:string,
-      name:string
-    }
+      _id: string;
+      name: string;
+    };
 
     type TJwtVerify = TestObject & {
       iat: number;
@@ -74,10 +74,10 @@ describe('Tests AuthService', () => {
         tokens.refreshToken,
         String(process.env.REFRESH_TOKEN_SECRET_KEY),
       ) as TJwtVerify;
-      assert.equal(dataFromAccessToken._id, testObject._id)
-      assert.equal(dataFromAccessToken.name, testObject.name)
-      assert.equal(dataFromRefreshToken._id, testObject._id)
-      assert.equal(dataFromRefreshToken.name, testObject.name)
+      assert.equal(dataFromAccessToken._id, testObject._id);
+      assert.equal(dataFromAccessToken.name, testObject.name);
+      assert.equal(dataFromRefreshToken._id, testObject._id);
+      assert.equal(dataFromRefreshToken.name, testObject.name);
     });
   });
 });

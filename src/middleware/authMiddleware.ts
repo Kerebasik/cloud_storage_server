@@ -11,8 +11,11 @@ declare global {
   }
 }
 
-export type TDecode = {
+export type TPayload = {
   _id: string;
+};
+
+export type TDecode = TPayload & {
   iat: number;
   exp: number;
 };
