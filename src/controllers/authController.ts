@@ -18,6 +18,8 @@ import UserDto from '../dtos/userDto';
 import TokenService from '../services/tokenService';
 import TokenModel from '../models/tokenModel';
 import UserModel from '../models/userModel';
+import * as uuid from 'uuid'
+import {sendMail} from "../services/mailService";
 
 export class AuthController {
   static async registration(
@@ -39,9 +41,11 @@ export class AuthController {
           .status(ServerStatus.Conflict)
           .json({ message: ServerMessageUser.UserWithEmailAlready });
       }
-
+      const activationLink = uuid.v4();
       const hashPassword = SHA256(password);
-      const newUser = await User.create({ email, password: hashPassword });
+      const newUser = await User.create({ email, password: hashPassword, activationLink });
+      await sendMail(`${email}`, `http://localhost:3000/api/activate/${activationLink}`)
+
       await FileService.createDir(
         req,
         new File({ user: newUser.id, name: '' }),

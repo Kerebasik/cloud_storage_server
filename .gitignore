@@ -1,6 +1,6 @@
 .idea
 .env
-Tasks.txt
+tasks.txt
 /node_modules/
 /dist
 /src/files
