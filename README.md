@@ -1,6 +1,5 @@
 # Cloud storage server
 ***
-
 ### Стек
 
 | Технології      | Опис                                                                                                                     | Link ↘                               |
