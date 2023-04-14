@@ -15,5 +15,6 @@ authRoutes.post('/login', AuthController.login);
 authRoutes.post('/', authMiddleware, AuthController.auth);
 authRoutes.get('/refresh', AuthController.refresh);
 authRoutes.get('/logout', AuthController.logout);
+authRoutes.get('/activated/:link', AuthController.activated)
 
 export default authRoutes;

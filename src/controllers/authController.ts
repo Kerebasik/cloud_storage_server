@@ -44,7 +44,7 @@ export class AuthController {
       const activationLink = uuid.v4();
       const hashPassword = SHA256(password);
       const newUser = await User.create({ email, password: hashPassword, activationLink });
-      await sendMail(`${email}`, `http://localhost:3000/api/activate/${activationLink}`)
+      await sendMail(`${email}`, `${activationLink}`)
 
       await FileService.createDir(
         req,
@@ -166,6 +166,22 @@ export class AuthController {
     } catch (e) {
       console.log(e);
       return res.status(ServerStatus.Error).json(ServerMessage.Error);
+    }
+  }
+
+  static async activated(req:Request, res:Response){
+    try {
+      const link = req.params.link
+      const user = await UserModel.findOne({activationLink:link}) as HydratedDocument<IUser>;
+      if(!user) {
+        return res.status(ServerStatus.NotFound).json(ServerMessageUser.UserNotFound)
+      }
+      user.activated = true;
+      await user.save();
+      return res.status(ServerStatus.ObjectCreated).redirect(`${process.env.API_URL}/api`)
+    }catch (e){
+      console.log(e)
+      return res.status(ServerStatus.Error).json(ServerMessage.Error)
     }
   }
 }

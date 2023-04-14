@@ -10,6 +10,7 @@ export interface IUser {
   diskStorage: number;
   usedStorage: number;
   activationLink:string;
+  activated:boolean;
   avatar: string;
   files: mongoose.Schema.Types.ObjectId;
 }
@@ -19,7 +20,8 @@ const User = new Schema<IUser>({
   password: { type: MongooseType.String, required: true },
   diskStorage: { type: MongooseType.Number, default: 1024 ** 3 * 10 },
   usedStorage: { type: MongooseType.Number, default: 0 },
-  activationLink:{type: MongooseType.String},
+  activationLink:{type: MongooseType.String, unique:true},
+  activated:{ type:MongooseType.Boolean, default:false},
   avatar: { type: MongooseType.String, default: '' },
   files: [{ type: MongooseType.ObjectId, ref: 'File' }],
 });

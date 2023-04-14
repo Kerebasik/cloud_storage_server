@@ -23,7 +23,7 @@ export async function sendMail(to:string, link:string) {
       text: "",
       html: `
        <div>
-            <b>Creay</b>
+            <a href=${process.env.API_URL}/api/auth/activated/${link}>${link}</a>
        </div>
     `
     });

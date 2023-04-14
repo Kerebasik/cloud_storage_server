@@ -25,4 +25,5 @@ export enum ServerMessageUser {
   UserCreated = 'User was created',
   UserNotFound = 'User not found',
   UserPassIsNotValid = 'Invalid password',
+  UserActivated='User was activated'
 }
