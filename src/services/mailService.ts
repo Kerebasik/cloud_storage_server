@@ -23,7 +23,7 @@ export async function sendMail(to:string, link:string) {
       text: "",
       html: `
        <div>
-            <a href=${process.env.API_URL}/api/auth/activated/${link}>${link}</a>
+            <p>Click on <a href=${process.env.API_URL}/api/auth/activated/${link}>${link}</a> for activated account.</p>
        </div>
     `
     });
