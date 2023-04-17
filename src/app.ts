@@ -1,10 +1,10 @@
 import * as dotenv from 'dotenv';
 import path from 'path';
-dotenv.config({path:path.resolve(__dirname, '..', '.env')})
+dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
 import mongoose from 'mongoose';
 import express, { Express } from 'express';
-import authRoutes from './routes/authRoutes';
+import authRouter from './routes/authRoutes';
 import fileRouter from './routes/fileRoutes';
 import expressFileUpload from './middleware/fileUploadMiddleware';
 import cors from './middleware/corsMiddleware';
@@ -17,8 +17,7 @@ import * as swaggerDocument from './swagger.json';
 
 import swaggerUi from 'swagger-ui-express';
 import avatarPathMiddleware from './middleware/avatarPathModdleware';
-
-
+import subscriptionRouter from './routes/subscriptionRoutes';
 
 (() => {
   try {
@@ -46,11 +45,12 @@ app.use(cookieParser());
 app.use(cors);
 app.use(filePathMiddleware(path.resolve(__dirname, 'files')));
 app.use(avatarPathMiddleware(path.resolve(__dirname, 'static')));
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRouter);
 app.use('/api/file', fileRouter);
+app.use('/api/subscription', subscriptionRouter);
 app.use('/api/user', userRouter);
 
-const PORT:number = Number(process.env.PORT) || 3000;
+const PORT: number = Number(process.env.PORT) || 3000;
 const DB_URL: string = 'mongodb://127.0.0.1:27017/cloudStorageDB';
 
 const start = async () => {
