@@ -21,6 +21,7 @@ import {
 } from '../enums/server/serverMessage';
 import { RequestWithBody, RequestWithQuery } from '../types/requestType';
 import User, { IUser } from '../models/userModel';
+import Subscription, { ISubscription } from '../models/subscriptionModel';
 
 export class FileController {
   static async createDir(req: RequestWithBody<TInputCreateDir>, res: Response) {
@@ -96,8 +97,10 @@ export class FileController {
       const user = (await User.findOne({
         _id: req.userId,
       })) as HydratedDocument<IUser>;
-
-      if (user.usedStorage + file.size > user.diskStorage) {
+      const subscription = (await Subscription.findById(
+        user.subscription,
+      )) as HydratedDocument<ISubscription>;
+      if (user.usedStorage + file.size > subscription.diskStorage) {
         return res
           .status(ServerStatus.BadRequest)
           .json({ message: ServerMessageDisk.NoSpaceDisk });

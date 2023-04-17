@@ -18,8 +18,9 @@ import UserDto from '../dtos/userDto';
 import TokenService from '../services/tokenService';
 import TokenModel from '../models/tokenModel';
 import UserModel from '../models/userModel';
-import * as uuid from 'uuid'
-import {sendMail} from "../services/mailService";
+import * as uuid from 'uuid';
+import { sendMail } from '../services/mailService';
+import Subscription, { ISubscription } from '../models/subscriptionModel';
 
 export class AuthController {
   static async registration(
@@ -34,7 +35,9 @@ export class AuthController {
           .json({ message: ServerMessage.UncorrectedReq, errors });
       }
       const { email, password } = req.body;
-
+      const subscription = (await Subscription.findOne({
+        name: 'Standart',
+      })) as HydratedDocument<ISubscription>;
       const candidate = await User.findOne({ email });
       if (candidate) {
         return res
@@ -43,8 +46,13 @@ export class AuthController {
       }
       const activationLink = uuid.v4();
       const hashPassword = SHA256(password);
-      const newUser = await User.create({ email, password: hashPassword, activationLink });
-      await sendMail(`${email}`, `${activationLink}`)
+      const newUser = await User.create({
+        email: email,
+        password: hashPassword,
+        activationLink: activationLink,
+        subscription: subscription._id,
+      });
+      await sendMail(`${email}`, `${activationLink}`);
 
       await FileService.createDir(
         req,
@@ -169,19 +177,25 @@ export class AuthController {
     }
   }
 
-  static async activated(req:Request, res:Response){
+  static async activated(req: Request, res: Response) {
     try {
-      const link = req.params.link
-      const user = await UserModel.findOne({activationLink:link}) as HydratedDocument<IUser>;
-      if(!user) {
-        return res.status(ServerStatus.NotFound).json(ServerMessageUser.UserNotFound)
+      const link = req.params.link;
+      const user = (await UserModel.findOne({
+        activationLink: link,
+      })) as HydratedDocument<IUser>;
+      if (!user) {
+        return res
+          .status(ServerStatus.NotFound)
+          .json(ServerMessageUser.UserNotFound);
       }
       user.activated = true;
       await user.save();
-      return res.status(ServerStatus.ObjectCreated).redirect(`${process.env.API_URL}/api`)
-    }catch (e){
-      console.log(e)
-      return res.status(ServerStatus.Error).json(ServerMessage.Error)
+      return res
+        .status(ServerStatus.ObjectCreated)
+        .redirect(`${process.env.API_URL}/api`);
+    } catch (e) {
+      console.log(e);
+      return res.status(ServerStatus.Error).json(ServerMessage.Error);
     }
   }
 }
