@@ -3,14 +3,14 @@ import { IUser } from '../models/userModel';
 class UserDto {
   _id;
   email;
-  diskStorage;
+  subscription;
   usedStorage;
   avatar;
   files;
   constructor(model: IUser) {
     this._id = model._id;
     this.email = model._id;
-    this.diskStorage = model.diskStorage;
+    this.subscription = model.subscription;
     this.usedStorage = model.usedStorage;
     this.avatar = model.avatar;
     this.files = model.files;
