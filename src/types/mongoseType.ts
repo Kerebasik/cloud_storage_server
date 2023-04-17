@@ -5,5 +5,5 @@ export const MongooseType = {
   Number: mongoose.Schema.Types.Number,
   String: mongoose.Schema.Types.String,
   Date: mongoose.Schema.Types.Date,
-  Boolean:mongoose.Schema.Types.Boolean
+  Boolean: mongoose.Schema.Types.Boolean,
 };

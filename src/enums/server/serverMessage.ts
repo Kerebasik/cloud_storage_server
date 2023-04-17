@@ -3,6 +3,11 @@ export enum ServerMessage {
   UncorrectedReq = 'Uncorrected request',
 }
 
+export enum ServerMessageSubscription {
+  NotFound = 'Subscription not found',
+  WasDelete = 'Subscription was delete',
+}
+
 export enum ServerMessageError {
   UploadError = 'Upload error',
   AuthError = 'Auth error',
@@ -25,5 +30,5 @@ export enum ServerMessageUser {
   UserCreated = 'User was created',
   UserNotFound = 'User not found',
   UserPassIsNotValid = 'Invalid password',
-  UserActivated='User was activated'
+  UserActivated = 'User was activated',
 }
