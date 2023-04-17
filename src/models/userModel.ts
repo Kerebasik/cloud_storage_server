@@ -7,10 +7,10 @@ export interface IUser {
   _id: mongoose.Schema.Types.ObjectId;
   email: string;
   password: string;
-  diskStorage: number;
+  subscription: mongoose.Schema.Types.ObjectId;
   usedStorage: number;
-  activationLink:string;
-  activated:boolean;
+  activationLink: string;
+  activated: boolean;
   avatar: string;
   files: mongoose.Schema.Types.ObjectId;
 }
@@ -18,10 +18,10 @@ export interface IUser {
 const User = new Schema<IUser>({
   email: { type: MongooseType.String, required: true, unique: true },
   password: { type: MongooseType.String, required: true },
-  diskStorage: { type: MongooseType.Number, default: 1024 ** 3 * 10 },
+  subscription: { type: MongooseType.ObjectId, ref: 'Subscription' },
   usedStorage: { type: MongooseType.Number, default: 0 },
-  activationLink:{type: MongooseType.String, unique:true},
-  activated:{ type:MongooseType.Boolean, default:false},
+  activationLink: { type: MongooseType.String, unique: true },
+  activated: { type: MongooseType.Boolean, default: false },
   avatar: { type: MongooseType.String, default: '' },
   files: [{ type: MongooseType.ObjectId, ref: 'File' }],
 });
