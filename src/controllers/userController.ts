@@ -15,7 +15,7 @@ export class UserController {
     try {
       const file = req.files?.file as UploadedFile;
       if (!file) {
-        res.status(ServerStatus.NotFound).json(ServerMessageFile.FileNotFound);
+        return res.status(ServerStatus.NotFound).json(ServerMessageFile.FileNotFound);
       }
       const user = (await User.findById(req.userId)) as HydratedDocument<IUser>;
       const userAvatar = uuidv4() + file.name;

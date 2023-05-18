@@ -11,11 +11,15 @@ import {
 interface IInputBodyCreateSubscription {
   name: string;
   priceInCents: number;
+  stripePriceApiId: string;
+  diskStorage:number;
 }
 interface IInputBodyUpdateSubscription {
   _id: string;
   name: string;
   priceInCents: number;
+  diskStorage:number;
+  stripePriceApiId: string;
 }
 
 interface IInputQueryDeleteSubscription {
@@ -28,9 +32,9 @@ export class SubscriptionController {
     res: Response,
   ) {
     try {
-      const { name, priceInCents } = req.body;
+      const { name, priceInCents, stripePriceApiId, diskStorage } = req.body;
       const newSubscription: HydratedDocument<ISubscription> = new Subscription(
-        { name, priceInCents },
+        { name, priceInCents, stripePriceApiId, diskStorage },
       );
       await newSubscription.save();
       return res.status(ServerStatus.Ok).json(newSubscription);
@@ -45,8 +49,13 @@ export class SubscriptionController {
     res: Response,
   ) {
     try {
-      const { _id, name, priceInCents } = req.body;
-      await Subscription.findByIdAndUpdate(_id, { name, priceInCents });
+      const { _id, name, priceInCents, stripePriceApiId, diskStorage } = req.body;
+      await Subscription.findByIdAndUpdate(_id, {
+        name,
+        priceInCents,
+        stripePriceApiId,
+        diskStorage
+      });
       return res.status(ServerStatus.ObjectCreated).json();
     } catch (e) {
       console.log(e);
@@ -72,7 +81,13 @@ export class SubscriptionController {
 
   static async getSubscriptionAll(req: Request, res: Response) {
     try {
-      const subscriptions = await Subscription.find();
+      const search = req.query.search;
+      let subscriptions;
+      if(search){
+        subscriptions = await Subscription.findById(search);
+      } else {
+        subscriptions = await Subscription.find();
+      }
       if (!subscriptions) {
         return res
           .status(ServerStatus.NotFound)

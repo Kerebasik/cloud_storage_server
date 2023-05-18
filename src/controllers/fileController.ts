@@ -49,7 +49,7 @@ export class FileController {
   static async getFiles(req: RequestWithQuery<TInputGetFiles>, res: Response) {
     try {
       const sort = req.query.sort;
-      let files;
+      let files:IFile[];
       switch (sort) {
         case 'name':
           files = await File.find({
