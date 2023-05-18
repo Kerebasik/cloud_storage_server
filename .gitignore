@@ -2,7 +2,8 @@
 .env
 tasks.txt
 /node_modules/
-/dist
+dist
+.data
 /src/files
 /src/static
 yarn-error.log
