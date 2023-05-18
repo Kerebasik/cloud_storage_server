@@ -4,15 +4,16 @@
   "main": "src/index.ts",
   "scripts": {
     "watch": "tsc -w",
-    "ts:start": "tsc",
+    "build": "tsc",
     "format": "prettier --write .\n",
     "test:unit": "mocha ./dist/tests/unit/*.test.js",
-    "dev": "nodemon .\\dist\\app.js",
-    "start:prod": "node .\\dist\\app.js"
+    "dev": "nodemon ./dist/app.js",
+    "start": "node ./dist/app.js"
   },
   "license": "MIT",
   "dependencies": {
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "crypto-js": "~4.1.1",
     "dotenv": "^16.0.3",
     "express": "~4.18.2",
