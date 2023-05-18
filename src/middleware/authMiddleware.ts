@@ -37,7 +37,6 @@ export default function (req: Request, res: Response, next: NextFunction) {
     req.userId = decode._id;
     return next();
   } catch (e) {
-    console.log(e);
     return res
       .status(ServerStatus.Unauthorized)
       .json({ message: ServerMessageError.AuthError });
