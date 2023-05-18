@@ -3,7 +3,7 @@ import { SubscriptionController } from '../controllers/subscriptionController';
 
 const subscriptionRouter = Router();
 
-subscriptionRouter.get('/findAll', SubscriptionController.getSubscriptionAll);
+subscriptionRouter.get('/find', SubscriptionController.getSubscriptionAll);
 subscriptionRouter.post('/create', SubscriptionController.create);
 subscriptionRouter.patch('/update', SubscriptionController.update);
 subscriptionRouter.delete('/delete', SubscriptionController.delete);
