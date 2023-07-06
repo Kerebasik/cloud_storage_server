@@ -12,13 +12,13 @@ interface IInputBodyCreateSubscription {
   name: string;
   priceInCents: number;
   stripePriceApiId: string;
-  diskStorage:number;
+  diskStorage: number;
 }
 interface IInputBodyUpdateSubscription {
   _id: string;
   name: string;
   priceInCents: number;
-  diskStorage:number;
+  diskStorage: number;
   stripePriceApiId: string;
 }
 
@@ -49,12 +49,13 @@ export class SubscriptionController {
     res: Response,
   ) {
     try {
-      const { _id, name, priceInCents, stripePriceApiId, diskStorage } = req.body;
+      const { _id, name, priceInCents, stripePriceApiId, diskStorage } =
+        req.body;
       await Subscription.findByIdAndUpdate(_id, {
         name,
         priceInCents,
         stripePriceApiId,
-        diskStorage
+        diskStorage,
       });
       return res.status(ServerStatus.ObjectCreated).json();
     } catch (e) {
@@ -83,7 +84,7 @@ export class SubscriptionController {
     try {
       const search = req.query.search;
       let subscriptions;
-      if(search){
+      if (search) {
         subscriptions = await Subscription.findById(search);
       } else {
         subscriptions = await Subscription.find();
