@@ -1,20 +1,18 @@
 import * as nodemailer from 'nodemailer';
 
-const SMTP_HOST: string = String(process.env.SMTP_HOST);
-const SMTP_PORT: number = Number(process.env.SMTP_PORT);
 const SMTP_USER: string = String(process.env.SMTP_USER);
 const SMTP_PASS: string = String(process.env.SMTP_PASS);
 
 export async function sendMail(to: string, link: string) {
   try {
     const transporter = nodemailer.createTransport({
-      host: SMTP_HOST,
-      port: SMTP_PORT,
+      host: "smtp.ukr.net",
+      port: 465,
       secure: true,
       auth: {
-        user: SMTP_USER,
-        pass: SMTP_PASS,
-      },
+        user: `${SMTP_USER}`,
+        pass: `${SMTP_PASS}`
+      }
     });
     return await transporter.sendMail({
       from: SMTP_USER,
