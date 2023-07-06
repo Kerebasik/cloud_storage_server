@@ -38,7 +38,10 @@ export class FileController {
         parentFile.children.push(file._id);
         await parentFile.save();
       }
-      await file.save();
+      const newFile = await file.save();
+      const user = await User.findById({_id:req.userId}) as HydratedDocument<IUser>;
+      user.files.push(newFile._id);
+      await user.save()
       return res.status(ServerStatus.ObjectCreated).json(file);
     } catch (e) {
       console.log(e);
@@ -49,7 +52,7 @@ export class FileController {
   static async getFiles(req: RequestWithQuery<TInputGetFiles>, res: Response) {
     try {
       const sort = req.query.sort;
-      let files:IFile[];
+      let files: IFile[];
       switch (sort) {
         case 'name':
           files = await File.find({
@@ -207,14 +210,18 @@ export class FileController {
   ) {
     try {
       const search = req.query.search;
-      const files = (await File.find({ user: req.userId })) as Array<IFile>;
+      const parent = req.query.parent;
+      let files;
+      files = (await File.find({ user: req.userId, parent:parent })) as Array<IFile>;
       if (!files) {
         return res
           .status(ServerStatus.NotFound)
           .json(ServerMessageFile.FileNotFound);
       }
-      files.filter((file) => file.name.includes(search));
-      return res.status(ServerStatus.Ok).json({ files });
+      if(!!search){
+        files = files.filter((file) => file.name.includes(search));
+      }
+      return res.status(ServerStatus.Ok).json(files );
     } catch (e) {
       console.log(e);
       return res
