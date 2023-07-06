@@ -23,4 +23,5 @@ export type TInputDeleteFile = {
 
 export type TInputSearchFile = {
   search: string;
+  parent:string;
 };
