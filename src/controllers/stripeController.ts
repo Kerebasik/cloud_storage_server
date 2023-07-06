@@ -37,6 +37,6 @@ export class StripeController {
     })) as HydratedDocument<ISubscription>;
     user.subscription = subscription._id;
     await user.save();
-    return res.status(ServerStatus.ObjectCreated).json();
+    return res.redirect(`${process.env.CLIENT_URL}/subscriptions`)
   }
 }
