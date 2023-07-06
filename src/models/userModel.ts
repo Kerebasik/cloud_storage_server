@@ -12,7 +12,7 @@ export interface IUser {
   activationLink: string;
   activated: boolean;
   avatar: string;
-  files: mongoose.Schema.Types.ObjectId;
+  files: Array<mongoose.Schema.Types.ObjectId>;
 }
 
 const User = new Schema<IUser>({
