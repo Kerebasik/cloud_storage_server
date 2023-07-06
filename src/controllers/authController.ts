@@ -68,7 +68,7 @@ export class AuthController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
-       res
+      res
         .status(ServerStatus.ObjectCreated)
         .json({ message: ServerMessageUser.UserCreated });
     } catch (e) {
@@ -87,6 +87,10 @@ export class AuthController {
         return res
           .status(ServerStatus.NotFound)
           .json({ message: ServerMessageUser.UserNotFound });
+      }
+
+      if(user.activated===false){
+        return res.status(ServerStatus.BadRequest).json({message:ServerMessageUser.UserNotActivated})
       }
       const isPassValid = PassValid(password, user.password);
       if (!isPassValid) {
@@ -192,7 +196,7 @@ export class AuthController {
       await user.save();
       return res
         .status(ServerStatus.ObjectCreated)
-        .redirect(`${process.env.API_URL}/api`);
+        .redirect(`${process.env.CLIENT_URL}/activated`);
     } catch (e) {
       console.log(e);
       return res.status(ServerStatus.Error).json(ServerMessage.Error);
