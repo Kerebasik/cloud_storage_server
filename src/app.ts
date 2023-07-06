@@ -35,13 +35,28 @@ import stripeRouter from './routes/stripeRoutes';
   }
 })();
 
-const app: Express = express();
-const cors = require('cors')
 
-app.use(cors({
+const cors = require('cors');
+
+const app: Express = express();
+
+//const whitelist = ['http://localhost:3000']
+const corsOptions = {
   credentials: true,
-  origin: process.env.CLIENT_URL
-}));
+  origin:'http://localhost:3000',
+  optionsSuccessStatus: 204
+  // origin: function(origin:any, callback:any) {
+  //   if (whitelist.indexOf(origin) !== -1) {
+  //     callback(null, true)
+  //   } else {
+  //     callback(new Error('Not allowed by CORS'))
+  //   }
+  // }
+}
+
+app.use(
+  cors(corsOptions),
+);
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, 'static')));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -50,14 +65,14 @@ app.use(cookieParser());
 app.use(filePathMiddleware(path.resolve(__dirname, 'files')));
 app.use(avatarPathMiddleware(path.resolve(__dirname, 'static')));
 app.use('/api/auth', authRouter);
-app.use('/api/file', fileRouter);
+app.use('/api/files', fileRouter);
 app.use('/api/subscriptions', subscriptionRouter);
 app.use('/api/user', userRouter);
 app.use('/api/payment', stripeRouter);
 
 const PORT: number = Number(process.env.PORT) || 5000;
 //const DB_URL: string = String(process.env.DB_URL)||'mongodb://127.0.0.1:27017/cloudStorageDB';
-const DB_URL: string ='mongodb://localhost:27017/cloudStorageDB';
+const DB_URL: string = 'mongodb://127.0.0.1:27017/cloudStorageDB';
 
 const start = async () => {
   try {
