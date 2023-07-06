@@ -15,9 +15,14 @@ export class UserController {
     try {
       const file = req.files?.file as UploadedFile;
       if (!file) {
-        return res.status(ServerStatus.NotFound).json(ServerMessageFile.FileNotFound);
+        return res
+          .status(ServerStatus.NotFound)
+          .json(ServerMessageFile.FileNotFound);
       }
       const user = (await User.findById(req.userId)) as HydratedDocument<IUser>;
+      if(!!user.avatar){
+        fs.unlinkSync(`${req.avatarPath}\\${user.avatar}`)
+      }
       const userAvatar = uuidv4() + file.name;
       const path = `${req.avatarPath}\\${userAvatar}`;
       user.avatar = userAvatar;
