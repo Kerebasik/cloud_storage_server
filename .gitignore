@@ -1,4 +1,5 @@
 .idea
+/config
 .env
 tasks.txt
 /node_modules/

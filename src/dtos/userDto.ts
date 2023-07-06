@@ -9,7 +9,7 @@ class UserDto {
   files;
   constructor(model: IUser) {
     this._id = model._id;
-    this.email = model._id;
+    this.email = model.email;
     this.subscription = model.subscription;
     this.usedStorage = model.usedStorage;
     this.avatar = model.avatar;
